@@ -1,0 +1,2 @@
+C:\Users\201600947\Documents\GitHub\ExercicioEndless\ExercicioEndless\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\Users\201600947\Documents\GitHub\ExercicioEndless\ExercicioEndless\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache

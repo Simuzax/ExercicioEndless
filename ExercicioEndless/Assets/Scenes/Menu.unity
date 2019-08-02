@@ -659,7 +659,7 @@ GameObject:
   - component: {fileID: 861132567}
   m_Layer: 0
   m_Name: Game
-  m_TagString: Untagged
+  m_TagString: Game
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -676,11 +676,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88e2a950db1a824aba85114d35e1cb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timerMax: 3
   fundo: {fileID: 1276680906}
   tile: {fileID: 7610235309315755401, guid: e957ec70d831d4243acfa34231d99d7e, type: 3}
-  maxQueue: 6
-  distanceBetweenTiles: {x: 2, y: 5}
-  firstPosition: {x: 1, y: 1}
+  maxQueue: 4
 --- !u!4 &861132568
 Transform:
   m_ObjectHideFlags: 0

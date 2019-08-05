@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class Game : MonoBehaviour
 {
@@ -18,11 +19,11 @@ public class Game : MonoBehaviour
     Transform[] spawns = new Transform[4];
 
     //Tiles
-    Queue<Tile> tiles = new Queue<Tile>();
+    public Queue<Tile> tiles = new Queue<Tile>();
 
     //Lanes
     [SerializeField]
-    int maxQueue;
+    public int maxQueue;
     int maxLane = 4;
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -38,8 +39,6 @@ public class Game : MonoBehaviour
 
                 spawns[i] = spawnsGO[i].transform;
             }
-
-            spawn();
         }
     }
 
@@ -72,7 +71,7 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        timer = Time.time;
+        timer = 0;
     }
 
     // Update is called once per frame
@@ -80,9 +79,14 @@ public class Game : MonoBehaviour
     {
         if (Time.time >= timer + timerMax && tiles.Count < maxQueue)
         {
-            timer += Time.time;
+            timer = Time.time;
 
             spawn();
+        }
+
+        foreach (Tile t in tiles)
+        {
+            t.speed = tiles.Peek().speed;
         }
     }
 

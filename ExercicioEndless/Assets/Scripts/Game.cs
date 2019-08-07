@@ -16,9 +16,11 @@ public class Game : MonoBehaviour
     public GameObject tile;
 
     //Spawns
+    [SerializeField]
     Transform[] spawns = new Transform[4];
 
     //Tiles
+    [SerializeField]
     public Queue<Tile> tiles = new Queue<Tile>();
 
     //Lanes
@@ -26,19 +28,52 @@ public class Game : MonoBehaviour
     public int maxQueue;
     int maxLane = 4;
 
+    [SerializeField]
+    bool inMenu;
+
+    //Speed
+    [SerializeField]
+    float speed_;
+    public float Speed
+    {
+        get
+        {
+            return speed_;
+        }
+        set
+        {
+            speed_ = value;
+            foreach(GameObject t in GameObject.FindGameObjectsWithTag("Tile"))
+            {
+                t.GetComponent<Tile>().speed = speed_;
+            }
+        }
+    }
+
+    //Troca de Cena e Referência de SpawnPoints
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Jogo")
         {
+            inMenu = false;
+
             GameObject[] spawnsGO = GameObject.FindGameObjectsWithTag("spawnPoints");
 
             for(int i = 0; i < spawnsGO.Length;i++)
             {
                 if (i >= spawns.Length)
+                {
                     break;
+                }   
 
                 spawns[i] = spawnsGO[i].transform;
+
+                Vector3 pos = spawns[i].position;
+                pos.y += tile.GetComponent<SpriteRenderer>().bounds.size.y / 2;
+
+                spawns[i].position = pos;
             }
+            spawn();
         }
     }
 
@@ -50,22 +85,27 @@ public class Game : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void spawn()
+    public void spawn()
     {
-        if (tiles.Count >= maxQueue)
+        if (tiles.Count > 0)
         {
-            return;
+            respawn();
         }
+        else
+        {
+            int lane = Random.Range(0, maxLane);
 
-        int lane = Random.Range(0, maxLane);
+            if (!spawns[lane])
+            {
+                return;
+            }
 
-        Vector3 position = spawns[lane].position;
+            Vector2 position = spawns[lane].position;
 
-        Tile t = Instantiate(tile, position, Quaternion.identity).GetComponent<Tile>();
+            Tile t = Instantiate(tile, position, Quaternion.identity).GetComponent<Tile>();
 
-        t.lane = lane;
-
-        tiles.Enqueue(t);
+            t.lane = lane;
+        }
     }
 
     // Start is called before the first frame update
@@ -77,16 +117,17 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time >= timer + timerMax && tiles.Count < maxQueue)
+        if (inMenu == false)
         {
-            timer = Time.time;
+            if (Time.time >= timer + timerMax && tiles.Count < maxQueue)
+            {
+                timer = Time.time;
+            }
 
-            spawn();
-        }
-
-        foreach (Tile t in tiles)
-        {
-            t.speed = tiles.Peek().speed;
+            foreach (Tile t in tiles)
+            {
+                t.speed = tiles.Peek().speed;
+            }
         }
     }
 
@@ -114,7 +155,27 @@ public class Game : MonoBehaviour
         }
 
         t.lane = lane;
+
         t.transform.position = spawns[t.lane].position;
-        tiles.Enqueue(t);
+
+        t.GetComponent<BoxCollider2D>().enabled = true;
+
+        t.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    public void addToPool(Tile t)
+    {
+        if (tiles.Count < maxQueue)
+        {
+            t.GetComponent<BoxCollider2D>().enabled = false;
+
+            t.GetComponent<SpriteRenderer>().enabled = false;
+
+            tiles.Enqueue(t);
+        }
+        else
+        {
+            Destroy(t.gameObject);
+        }
     }
 }

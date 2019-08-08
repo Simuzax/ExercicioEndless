@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using TMPro;
 
 public class Game : MonoBehaviour
 {
@@ -43,9 +44,35 @@ public class Game : MonoBehaviour
         set
         {
             speed_ = value;
+
             foreach(GameObject t in GameObject.FindGameObjectsWithTag("Tile"))
             {
                 t.GetComponent<Tile>().speed = speed_;
+            }
+        }
+    }
+
+    public GameObject canvas;
+    public GameObject[] buttons;
+
+    //Score
+    public TextMeshProUGUI textScore;
+
+    [SerializeField]
+    double score_;
+    public double Score
+    {
+        get
+        {
+            return score_;
+        }
+        set
+        {
+            score_ = value;
+
+            foreach(GameObject t in GameObject.FindGameObjectsWithTag("Tile"))
+            {
+                t.GetComponent<Tile>().score = score_;
             }
         }
     }
@@ -56,6 +83,9 @@ public class Game : MonoBehaviour
         if (scene.name == "Jogo")
         {
             inMenu = false;
+
+            Destroy(buttons[0]);
+            Destroy(buttons[1]);
 
             GameObject[] spawnsGO = GameObject.FindGameObjectsWithTag("spawnPoints");
 
@@ -74,6 +104,9 @@ public class Game : MonoBehaviour
                 spawns[i].position = pos;
             }
             spawn();
+
+            //Mostrar Score
+            textScore.enabled = true;
         }
     }
 
@@ -81,12 +114,14 @@ public class Game : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(fundo);
+        DontDestroyOnLoad(canvas);
+        DontDestroyOnLoad(textScore);
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     public void spawn()
-    {
+    {   
         if (tiles.Count > 0)
         {
             respawn();
@@ -111,6 +146,9 @@ public class Game : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Esconder Score
+        textScore.enabled = false;
+
         timer = 0;
     }
 
@@ -129,6 +167,8 @@ public class Game : MonoBehaviour
                 t.speed = tiles.Peek().speed;
             }
         }
+
+        textScore.text = "Score: " + Score;
     }
 
     //Menu Start

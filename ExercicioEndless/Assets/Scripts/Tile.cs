@@ -1,19 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Linq;
 
 public class Tile : MonoBehaviour
 {
+    //Timer
+    [SerializeField]
+    float timerMax;
+    float timer;
+
     public int lane;
-    public float speed = 0.05f;
+    
     Game gameRef;
 
-    double score;
+    public double score;
+    public float speed = 0.05f;
 
     // Start is called before the first frame update
     void Start()
     {
+        timer = 0;
+
         gameRef = GameObject.FindGameObjectWithTag("Game").GetComponent<Game>();
     }
 
@@ -22,14 +31,18 @@ public class Tile : MonoBehaviour
     {
         transform.Translate(0, -speed, 0);
 
-        if (score % 5 == 0)
+        if (Time.time >= timer + timerMax)
         {
-            score++;
-            gameRef.Speed += 0.0001f;
+            timer = Time.time;
+
+            gameRef.Score++;
         }
 
-        score++;
-
+        if (score % 5 == 0)
+        {
+            gameRef.Speed += 0.00001f;
+        }
+        
 #if UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
